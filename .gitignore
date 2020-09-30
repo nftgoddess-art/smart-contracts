@@ -1,0 +1,20 @@
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build
+artifacts
+cache
+
+# Dependency directories
+node_modules
+jspm_packages
+
+# OS file
+.DS_Store
+.env
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Optional npm cache directory
+.npm
+.gitconfig
