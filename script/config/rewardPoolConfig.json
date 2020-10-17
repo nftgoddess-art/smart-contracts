@@ -1,0 +1,42 @@
+{
+    "goddessName": "Goddess",
+    "goddessSymbol": "GODDESS",
+    "fragmentsAdmin": "0xD37483EBB7b2192e135686F06F10EdcEFac875CC",
+
+    "uniswapFactory": "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+    "uniswapRouter": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+    
+    "proxyRegistryAddress": "0xD37483EBB7b2192e135686F06F10EdcEFac875CC",
+    "startTime": 1602982800,
+    "duration": 24192000,
+
+    "GDS": "0x39bbeeDDE89CB5Fc902ceD30ed3FeE2DbCc74e50",
+
+    "treasuary": "0xf4781C37e4Ba3b80718B615D4329C6C4A9024CC5",
+    "referral": "0xCb2c05BA8d9Ab54E7A487f5B67Ac69101C41FCd6",
+    "pools": {
+        "singleGDS": {
+            "maxCap": "1000",
+            "rewardAmount": "78000",
+            "fragmentPerWeek": 100
+        },
+        "uniswap": [
+            {
+                "token": "WETH",
+                "address": "0x8612c26687F4F159fd686268D067ab73157a0E35",
+                "decimals": 18,
+                "maxCap": "30",
+                "rewardAmount": "234000",
+                "fragmentPerWeek": 300
+            },
+            {
+                "token": "USDT",
+                "address": "0x7Fc856136832FFe58b0eFe5CD3bFaBB3418bbD0D",
+                "decimals": 6,
+                "maxCap": "10000",
+                "rewardAmount": "234000",
+                "fragmentPerWeek": 300
+            }
+        ]
+    } 
+}

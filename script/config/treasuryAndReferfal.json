@@ -1,0 +1,9 @@
+{
+    "USDT": "0x7Fc856136832FFe58b0eFe5CD3bFaBB3418bbD0D",
+    "GDS": "0x39bbeeDDE89CB5Fc902ceD30ed3FeE2DbCc74e50",
+    "totalHold": 200000,
+    "totalLock": 133333,
+    "startTime": 1603155600,
+    "monthLock": 6,
+    "admin": "0xD37483EBB7b2192e135686F06F10EdcEFac875CC"
+}
