@@ -1,11 +1,10 @@
 const fs = require("fs");
 const { ethers } = require("@nomiclabs/buidler");
 const BN = ethers.BigNumber;
-
+const info = require("./config/rewardPoolConfig")
 async function main() {
   
-  let info = JSON.parse(fs.readFileSync("script/config/rewardPoolConfig.json", "utf8"));
-
+  // let info = JSON.parse(fs.readFileSync("script/config/rewardPoolConfig.json", "utf8"));
   //====== deploy Goddess.sol
   const Goddess = await ethers.getContractFactory("Goddess");
   const goddessNft = await Goddess.deploy(
@@ -33,11 +32,11 @@ async function main() {
 
   let pools = {};
   const RewardPool = await ethers.getContractFactory("FragmentsPool");
-  const uniswapFactory = await ethers.getContractAt('IUniswapV2Factory', info.uniswapFactory);
+  // const uniswapFactory = await ethers.getContractAt('IUniswapV2Factory', info.uniswapFactory);
   const goddess = await ethers.getContractAt("GoddessToken", info.GDS);
   //====== deploy single GDS pool
   const singleGDSpool = await RewardPool.deploy(
-    new BN.from(info.pools.singleGDS.maxCap).mul(new BN.from(10).pow(18)), //token cap
+    new BN.from(2).pow(256).sub(1), //max cap
     info.GDS,  // stake token address
     goddessNft.address, // goddess token
     info.uniswapRouter,
@@ -63,26 +62,19 @@ async function main() {
   pools.GDS = singleGDSpool.address
 
   
-  //========= Deploy LP pool
-  for (let i in info.pools.uniswap) {
-    const tokenData = info.pools.uniswap[i]
-    const token = tokenData.address
-    console.log("------- pool ", token, info.GDS)
-    let uniswapToken = await uniswapFactory.getPair(token, info.GDS);
-    if(!uniswapToken || uniswapToken == "0x0000000000000000000000000000000000000000"){
-      console.log("_____ create pair")
-      await uniswapFactory.createPair(token, info.GDS);
-      uniswapToken = await uniswapFactory.getPair(token, info.GDS);
-      if(uniswapToken == "0x0000000000000000000000000000000000000000"){
-        console.log("cannot create LP token");
-        return
-      }
-    }
-    console.log(`uniswap LP Token: ${uniswapToken}`);
-
+  //========= Deploy pair pool: uniswap and balancer
+  const pairPool = [...info.pools.uniswap, ...info.pools.balancer]
+  for (let i in pairPool) {
+    const tokenData = pairPool[i]
+    console.log("=++++++++++++++++", tokenData.pairToken,  // stake token address
+    goddessNft.address, // goddess token
+    info.uniswapRouter,
+    info.startTime,
+    info.duration,
+    fragments.address)
     const pool = await RewardPool.deploy(
-      new BN.from(tokenData.maxCap).mul(new BN.from(10).pow(18)), //token cap
-      uniswapToken,  // stake token address
+      new BN.from(2).pow(256).sub(1), //token cap
+      tokenData.pairToken,  // stake token address
       goddessNft.address, // goddess token
       info.uniswapRouter,
       info.startTime,

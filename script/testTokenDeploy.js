@@ -1,13 +1,14 @@
 const fs = require("fs");
 const { ethers } = require("@nomiclabs/buidler");
 const BN = ethers.BigNumber;
+const testTokensInfo = require("./config/testToken")
 async function main() {
   const Token = await ethers.getContractFactory("SimpleToken");
   let addresses = {};
 
-  let testTokensInfo = JSON.parse(
-    fs.readFileSync("script/config/testToken.json", "utf8")
-  );
+  // let testTokensInfo = JSON.parse(
+  //   fs.readFileSync("script/config/testToken.json", "utf8")
+  // );
   for (let tokenInfo of testTokensInfo.tokens) {
     let token = await Token.deploy(
       tokenInfo.name,

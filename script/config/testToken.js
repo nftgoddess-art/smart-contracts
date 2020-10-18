@@ -1,4 +1,4 @@
-{
+module.exports = {
     "tokens": [
         {
             "name": "Republic",

@@ -1,10 +1,10 @@
 const fs = require("fs");
 const { ethers } = require("@nomiclabs/buidler");
 const BN = ethers.BigNumber;
-
+const info = require("./config/treasuryAndReferfal")
 async function main() {
   
-  let info = JSON.parse(fs.readFileSync("script/config/treasuryAndReferfal.json", "utf8"));
+  // let info = JSON.parse(fs.readFileSync("script/config/treasuryAndReferfal.json", "utf8"));
 
   // deploy Goddess.sol
   const vestingAmount = new BN.from(info.totalLock).mul(new BN.from(10).pow(new BN.from(18)))

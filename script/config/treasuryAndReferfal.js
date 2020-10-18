@@ -1,6 +1,6 @@
-{
-    "USDT": "0x7Fc856136832FFe58b0eFe5CD3bFaBB3418bbD0D",
-    "GDS": "0x39bbeeDDE89CB5Fc902ceD30ed3FeE2DbCc74e50",
+module.exports = {
+    "USDT": "0xF0597671c1baa8220Eb4b3344fBd6c3eC153e461",
+    "GDS": "0x1A69Ef2408eF99aB3AD76Ca15aC273Fc9F060588",
     "totalHold": 200000,
     "totalLock": 133333,
     "startTime": 1603155600,

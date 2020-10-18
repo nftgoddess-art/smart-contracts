@@ -1,10 +1,10 @@
 const fs = require("fs");
 const { ethers } = require("@nomiclabs/buidler");
 const BN = ethers.BigNumber;
-
+const info = require("./config/seedPoolConfig")
 async function main() {
   const SeedPool = await ethers.getContractFactory("SeedPool");
-  let info = JSON.parse(fs.readFileSync("script/config/seedPoolConfig.json", "utf8"));
+  // let info = JSON.parse(fs.readFileSync("script/config/seedPoolConfig.json", "utf8"));
   let gdsAddress = info.GDS;
   let goddess = await ethers.getContractAt("GoddessToken", gdsAddress);
   let pools = {};

@@ -1,10 +1,11 @@
 const fs = require("fs");
 const { ethers } = require("@nomiclabs/buidler");
 const BN = ethers.BigNumber;
+const info = require("./config/rewardPoolConfig")
 
 async function main() {
   
-  const info = JSON.parse(fs.readFileSync("script/config/rewardPoolConfig.json", "utf8"));
+  // const info = JSON.parse(fs.readFileSync("script/config/rewardPoolConfig.json", "utf8"));
   const uniswapFactory = await ethers.getContractAt('IUniswapV2Factory', info.uniswapFactory);
   //========= Deploy LP token
   for (let i in info.pools.uniswap) {
