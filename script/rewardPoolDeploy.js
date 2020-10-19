@@ -38,7 +38,7 @@ async function main() {
   const singleGDSpool = await RewardPool.deploy(
     new BN.from(2).pow(256).sub(1), //max cap
     info.GDS,  // stake token address
-    goddessNft.address, // goddess token
+    info.GDS, // goddess token
     info.uniswapRouter,
     info.startTime,
     info.duration,
@@ -66,16 +66,10 @@ async function main() {
   const pairPool = [...info.pools.uniswap, ...info.pools.balancer]
   for (let i in pairPool) {
     const tokenData = pairPool[i]
-    console.log("=++++++++++++++++", tokenData.pairToken,  // stake token address
-    goddessNft.address, // goddess token
-    info.uniswapRouter,
-    info.startTime,
-    info.duration,
-    fragments.address)
     const pool = await RewardPool.deploy(
       new BN.from(2).pow(256).sub(1), //token cap
       tokenData.pairToken,  // stake token address
-      goddessNft.address, // goddess token
+      info.GDS, // goddess token
       info.uniswapRouter,
       info.startTime,
       info.duration,
