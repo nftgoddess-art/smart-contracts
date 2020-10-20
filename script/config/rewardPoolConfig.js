@@ -5,7 +5,7 @@ module.exports = {
     "uniswapFactory": "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
     "uniswapRouter": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
     "proxyRegistryAddress": "0xD37483EBB7b2192e135686F06F10EdcEFac875CC",
-    "startTime": 1603069200,
+    "startTime": 1603179000,
     "duration": 24192000,
     "GDS": "0x1A69Ef2408eF99aB3AD76Ca15aC273Fc9F060588",
     "treasuary": "0xba85790F893bCb5291faa4d12d26af8c37cF21F4",
