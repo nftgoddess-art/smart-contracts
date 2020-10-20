@@ -53,9 +53,8 @@ contract FragmentsPool is RewardsPool {
         uint256 blockTime = block.timestamp;
         return
             fragmentsPerTokenStored.add(
-                blockTime
-                    .sub(fragmentsLastUpdateTime)
-                    .mul(fragmentsPerWeek)
+                fragmentsPerWeek
+                    .mul(blockTime.sub(fragmentsLastUpdateTime))
                     .mul(1e18)
                     .div(604800)
                     .div(tokenCapAmount)
