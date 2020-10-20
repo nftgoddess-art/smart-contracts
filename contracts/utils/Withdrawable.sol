@@ -3,9 +3,11 @@
 pragma solidity ^0.5.12;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "./PermissionGroups.sol";
 
 contract Withdrawable is PermissionGroups {
+    using SafeERC20 for IERC20;
     mapping(address => bool) internal blacklist;
 
     event TokenWithdraw(IERC20 token, uint256 amount, address sendTo);
@@ -24,7 +26,7 @@ contract Withdrawable is PermissionGroups {
         address sendTo
     ) external onlyAdmin {
         require(!blacklist[address(token)], "forbid to withdraw that token");
-        token.transfer(sendTo, amount);
+        token.safeTransfer(sendTo, amount);
         emit TokenWithdraw(token, amount, sendTo);
     }
 
