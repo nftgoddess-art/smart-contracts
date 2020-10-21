@@ -45,30 +45,28 @@ contract FragmentsPool is RewardsPool {
         _;
     }
 
-    function balanceFarmFragments(address account) public view returns (uint256) {
-        return Math.min(balanceOf(account), tokenCapAmount);
-    }
-
     function fragmentsPerToken() public view returns (uint256) {
-        uint256 blockTime = block.timestamp;
+        if (totalStakingBalance == 0) {
+            return fragmentsPerTokenStored;
+        }
         return
             fragmentsPerTokenStored.add(
-                fragmentsPerWeek
-                    .mul(blockTime.sub(fragmentsLastUpdateTime))
+                block
+                    .timestamp
+                    .sub(lastUpdateTime)
+                    .mul(fragmentsPerWeek)
                     .mul(1e18)
                     .div(604800)
-                    .div(tokenCapAmount)
+                    .div(totalStakingBalance)
             );
     }
 
     function fragmentsEarned(address account) public view returns (uint256) {
         return
-            fragments[account].add(
-                balanceFarmFragments(account).mul(
-                    fragmentsPerToken().sub(userFragmentsPerTokenPaid[account])
-                )
-                // .div(1e18)
-            );
+            stakeBalance[account]
+                .mul(fragmentsPerToken().sub(userFragmentsPerTokenPaid[account]))
+                .div(1e18)
+                .add(fragments[account]);
     }
 
     function stake(uint256 amount, address referrer) public updateFragments(msg.sender) {
@@ -98,13 +96,5 @@ contract FragmentsPool is RewardsPool {
 
     function setGoddessFragments(address _goddessFragments) public onlyAdmin {
         goddessFragments = IGoddessFragments(_goddessFragments);
-    }
-
-    function setTokenCapAmount(uint256 _tokenCapAmount)
-        public
-        onlyAdmin
-        updateFragments(address(0))
-    {
-        tokenCapAmount = _tokenCapAmount;
     }
 }
