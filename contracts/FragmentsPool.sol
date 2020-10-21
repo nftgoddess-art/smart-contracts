@@ -63,10 +63,12 @@ contract FragmentsPool is RewardsPool {
 
     function fragmentsEarned(address account) public view returns (uint256) {
         return
-            balanceFarmFragments(account)
-                .mul(fragmentsPerToken().sub(userFragmentsPerTokenPaid[account]))
-                .div(1e18)
-                .add(fragments[account]);
+            fragments[account].add(
+                balanceFarmFragments(account).mul(
+                    fragmentsPerToken().sub(userFragmentsPerTokenPaid[account])
+                )
+                // .div(1e18)
+            );
     }
 
     function stake(uint256 amount, address referrer) public updateFragments(msg.sender) {
