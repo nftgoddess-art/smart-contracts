@@ -1,9 +1,9 @@
 module.exports = {
-  "GDS": "0x1A69Ef2408eF99aB3AD76Ca15aC273Fc9F060588",
-  "startTime": 1603069200,
+  "GDS": "0x02BE1Ae5E540e76f7539D309d698c3Afb6c35582",
+  "startTime": 1603267200,
   "duration": 604800,
-  "treasuary": "0xD4444ED56110266d5F662f2C784649c8b832bdB6",
-  "referral": "0xfFE8976EAA840DE551206647E002D86dB04f571c",
+  "treasuary": "0x563515506FEE8b60FE1DF4b9B714d549474d0d82",
+  "referral": "0x94BC5dCD1c70BBD94Cc0EE1d2f614A44aBfAA598",
   "pool": [
     // {
     //   "token": "REN",
