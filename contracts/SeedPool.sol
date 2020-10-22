@@ -92,7 +92,7 @@ contract SeedPool is LPTokenWrapper, Withdrawable {
 
     // stake visibility is public as overriding LPTokenWrapper's stake() function
     function stake(uint256 amount, address referrer) public updateReward(msg.sender) checkStart {
-        checkCap(msg.sender);
+        checkCap(amount, msg.sender);
         _stake(amount, referrer);
     }
 
@@ -111,10 +111,11 @@ contract SeedPool is LPTokenWrapper, Withdrawable {
         }
     }
 
-    function checkCap(address user) private view {
+    function checkCap(uint256 amount, address user) private view {
         // check user cap
         require(
-            balanceOf(user) <= tokenCapAmount || block.timestamp >= starttime.add(ONE_WEEK),
+            balanceOf(user).add(amount) <= tokenCapAmount ||
+                block.timestamp >= starttime.add(ONE_WEEK),
             "token cap exceeded"
         );
     }
