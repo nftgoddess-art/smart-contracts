@@ -10,6 +10,12 @@ async function main() {
   const vestingAmount = new BN.from(info.totalLock).mul(new BN.from(10).pow(new BN.from(18)))
   const endTime = info.startTime + info.monthLock * 60 * 60 * 24 * 30;
   const Treasury = await ethers.getContractFactory("GoddessTreasury");
+  console.log("---------------------", info.USDT,
+  info.GDS,
+  vestingAmount.toString(),
+  info.startTime,
+  endTime,
+  info.admin)
   const treasuryDeployment = await Treasury.deploy(
     info.USDT,
     info.GDS,

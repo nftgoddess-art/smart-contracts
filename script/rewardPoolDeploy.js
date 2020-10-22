@@ -51,14 +51,19 @@ async function main() {
   await goddess.transfer(singleGDSpool.address, singleGDSpoolReward);
   console.log(`Transfered reward ${info.pools.singleGDS.rewardAmount} GDS`)
   await singleGDSpool.setGovernance(info.treasuary);
+  console.log("________ setted Governance")
   await singleGDSpool.setReferral(info.referral)
+  console.log("________ setted referral")
   await singleGDSpool.setFragmentsPerWeek(
     new BN.from(info.pools.singleGDS.fragmentPerWeek).mul(
       new BN.from(10).pow(new BN.from(18))
     )
   )
+  console.log("________ setted FragmentsPerWeek")
   await singleGDSpool.notifyRewardAmount(singleGDSpoolReward);
+  console.log("________ setted notifyRewardAmount")
   await fragments.addOperator(singleGDSpool.address)
+  console.log("________ setted operator")
   pools.GDS = singleGDSpool.address
 
   

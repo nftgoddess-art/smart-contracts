@@ -5,11 +5,11 @@ module.exports = {
     "uniswapFactory": "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
     "uniswapRouter": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
     "proxyRegistryAddress": "0xD37483EBB7b2192e135686F06F10EdcEFac875CC",
-    "startTime": 1603267200,
+    "startTime": 1603312200,
     "duration": 24192000,
-    "GDS": "0x02BE1Ae5E540e76f7539D309d698c3Afb6c35582",
-    "treasuary": "0x563515506FEE8b60FE1DF4b9B714d549474d0d82",
-    "referral": "0x94BC5dCD1c70BBD94Cc0EE1d2f614A44aBfAA598",
+    "GDS": "0x613094325DC750C5de20dd950194538ECb2430bA",
+    "treasuary": "0x5c8032827B7Ce179505E591b873f3191FB3d19F1",
+    "referral": "0x46E0b313A0B870C1fE49d05c8D9B140E3e51aa55",
     "pools": {
         "singleGDS": {
             "rewardAmount": "78000",
@@ -27,7 +27,7 @@ module.exports = {
             {
                 "token": "USDT",
                 "address": "0xF0597671c1baa8220Eb4b3344fBd6c3eC153e461",
-                "pairToken": "0x0E2B448c0D806DC1c7639E78f10FF2C1d49755e8",
+                "pairToken": "0x4ABa998d575B24d5A5fd025CB68FAaF57D47d2Dc",
                 "decimals": 6,
                 "rewardAmount": "234000",
                 "fragmentPerWeek": 300
@@ -45,7 +45,7 @@ module.exports = {
             {
                 "token": "LINK",
                 "address": "0x497A3Dd7165869eFc68AE0394Ba19Bce6ad5aE1B",
-                "pairToken": "0x9b506d98d0204285cf70b821741d838dad710ef4",
+                "pairToken": "0x13576f42c3eff799f002417571559cb01ef1420c",
                 "decimals": 18,
                 "rewardAmount": 39000,
                 "fragmentPerWeek": 50
