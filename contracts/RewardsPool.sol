@@ -38,44 +38,6 @@ contract RewardsPool is SeedPool {
         uniswapRouter = _uniswapRouter;
     }
 
-    function getBlessingPrice(address user)
-        public
-        view
-        returns (uint256 blessingPrice, uint256 newBlessingBalance)
-    {
-        if (totalStakingBalance == 0) return (0, 0);
-
-        // 5% increase for each previously user-purchased booster
-        uint256 blessedTime = numBlessing[user];
-        blessingPrice = globalBlessPrice.mul(blessedTime.mul(5).add(100)).div(100);
-
-        // increment blessedTime by 1
-        blessedTime = blessedTime.add(1);
-
-        // if no. of boosters exceed threshold, increase booster price by blessScaleFactor;
-        if (blessedTime >= blessThreshold) {
-            blessingPrice = blessingPrice
-                .mul((blessedTime.sub(blessThreshold)).mul(blessScaleFactor).add(100))
-                .div(100);
-        }
-
-        // 2.5% decrease for every 2 hour interval since last global boost purchase
-        blessingPrice = pow(
-            blessingPrice,
-            975,
-            1000,
-            (block.timestamp.sub(lastBlessingTime)).div(2 hours)
-        );
-
-        // adjust price based on expected increase in boost supply
-        // blessedTime has been incremented by 1 already
-        newBlessingBalance = balanceOf(user).mul(blessedTime.mul(5).add(100)).div(100);
-        uint256 blessBalanceIncrease = newBlessingBalance.sub(stakeBalance[user]);
-        blessingPrice = blessingPrice.mul(blessBalanceIncrease).mul(scaleFactor).div(
-            totalStakingBalance
-        );
-    }
-
     function setScaleFactorsAndThreshold(
         uint256 _blessThreshold,
         uint256 _blessScaleFactor,
@@ -118,39 +80,6 @@ contract RewardsPool is SeedPool {
         );
     }
 
-    function applyBoost(address user, uint256 newBlessingBalance) internal {
-        // increase no. of boosters bought
-        numBlessing[user] = numBlessing[user].add(1);
-
-        updateStakeBalanceAndSupply(user, newBlessingBalance);
-
-        // increase next purchase eligibility by an hour
-        nextBlessingTime[user] = block.timestamp.add(3600);
-
-        // increase global booster price by 1%
-        globalBlessPrice = globalBlessPrice.mul(101).div(100);
-
-        lastBlessingTime = block.timestamp;
-    }
-
-    function updateStakeBalanceAndSupply(address user, uint256 newBlessingBalance) private {
-        // subtract existing balance from boostedSupply
-        totalStakingBalance = totalStakingBalance.sub(stakeBalance[user]);
-
-        // when applying boosts,
-        // newBlessingBalance has already been calculated in getBoosterPrice()
-        if (newBlessingBalance == 0) {
-            // each booster adds 5% to current stake amount
-            newBlessingBalance = balanceOf(user).mul(numBlessing[user].mul(5).add(100)).div(100);
-        }
-
-        // update user's boosted balance
-        stakeBalance[user] = newBlessingBalance;
-
-        // update boostedSupply
-        totalStakingBalance = totalStakingBalance.add(newBlessingBalance);
-    }
-
     function setGovernance(address _governance) external onlyAdmin {
         governance = _governance;
         stablecoin = IGovernance(governance).getStableToken();
@@ -171,6 +100,59 @@ contract RewardsPool is SeedPool {
 
         stakeToken.safeTransfer(msg.sender, amount);
         getReward();
+    }
+
+    function getBlessingPrice(address user)
+        public
+        view
+        returns (uint256 blessingPrice, uint256 newBlessingBalance)
+    {
+        if (totalStakingBalance == 0) return (0, 0);
+
+        // 5% increase for each previously user-purchased booster
+        uint256 blessedTime = numBlessing[user];
+        blessingPrice = globalBlessPrice.mul(blessedTime.mul(5).add(100)).div(100);
+
+        // increment blessedTime by 1
+        blessedTime = blessedTime.add(1);
+
+        // if no. of boosters exceed threshold, increase booster price by blessScaleFactor;
+        if (blessedTime >= blessThreshold) {
+            blessingPrice = blessingPrice
+                .mul((blessedTime.sub(blessThreshold)).mul(blessScaleFactor).add(100))
+                .div(100);
+        }
+
+        // 2.5% decrease for every 2 hour interval since last global boost purchase
+        blessingPrice = pow(
+            blessingPrice,
+            975,
+            1000,
+            (block.timestamp.sub(lastBlessingTime)).div(2 hours)
+        );
+
+        // adjust price based on expected increase in boost supply
+        // blessedTime has been incremented by 1 already
+        newBlessingBalance = balanceOf(user).mul(blessedTime.mul(5).add(100)).div(100);
+        uint256 blessBalanceIncrease = newBlessingBalance.sub(stakeBalance[user]);
+        blessingPrice = blessingPrice.mul(blessBalanceIncrease).mul(scaleFactor).div(
+            totalStakingBalance
+        );
+    }
+
+    function applyBoost(address user, uint256 newBlessingBalance) internal {
+        // increase no. of boosters bought
+        numBlessing[user] = numBlessing[user].add(1);
+
+        updateStakeBalanceAndSupply(user, newBlessingBalance);
+
+        // increase next purchase eligibility by an hour
+        nextBlessingTime[user] = block.timestamp.add(3600);
+
+        // increase global booster price by 1%
+        globalBlessPrice = globalBlessPrice.mul(101).div(100);
+
+        lastBlessingTime = block.timestamp;
     }
 
     function updateGoddessBalanceAndSupply(address user) internal {
@@ -203,5 +185,23 @@ contract RewardsPool is SeedPool {
             for (uint256 i = 1; i < exponent; i++) z = z.mul(b).div(c);
             return z;
         }
+    }
+
+    function updateStakeBalanceAndSupply(address user, uint256 newBlessingBalance) private {
+        // subtract existing balance from boostedSupply
+        totalStakingBalance = totalStakingBalance.sub(stakeBalance[user]);
+
+        // when applying boosts,
+        // newBlessingBalance has already been calculated in getBoosterPrice()
+        if (newBlessingBalance == 0) {
+            // each booster adds 5% to current stake amount
+            newBlessingBalance = balanceOf(user).mul(numBlessing[user].mul(5).add(100)).div(100);
+        }
+
+        // update user's boosted balance
+        stakeBalance[user] = newBlessingBalance;
+
+        // update boostedSupply
+        totalStakingBalance = totalStakingBalance.add(newBlessingBalance);
     }
 }
