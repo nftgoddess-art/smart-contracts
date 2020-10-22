@@ -5,7 +5,6 @@ pragma solidity ^0.5.12;
 import "./utils/Withdrawable.sol";
 import "./interfaces/IUniswapRouter.sol";
 import "./interfaces/IGoddess.sol";
-import "./interfaces/IGovernance.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol";
@@ -28,7 +27,6 @@ contract GoddessFragments is Withdrawable {
     IGoddess goddess;
     IERC20 goddessToken;
 
-    address public governance;
     IUniswapRouter public uniswapRouter;
     address public stablecoin;
 
@@ -60,7 +58,7 @@ contract GoddessFragments is Withdrawable {
         uint256 maxQuantity,
         uint256 numFragments,
         address author
-    ) public onlyAdmin {
+    ) public onlyOperator {
         uint256 goddessID = goddess.create(maxQuantity);
         summonRequire[goddessID] = numFragments;
         authors[goddessID] = author;
@@ -69,7 +67,7 @@ contract GoddessFragments is Withdrawable {
 
     function addNextLevelGoddess(uint256 goddessID, uint256 fusionAmount)
         public
-        onlyAdmin
+        onlyOperator
         returns (uint256)
     {
         uint256 maxSupply = goddess.maxSupply(goddessID);
@@ -94,6 +92,15 @@ contract GoddessFragments is Withdrawable {
         goddess.mint(msg.sender, goddessID, 1, "");
     }
 
+    function fusionFeeInGds() public view returns (uint256) {
+        address[] memory routeDetails = new address[](3);
+        routeDetails[0] = address(goddessToken);
+        routeDetails[1] = uniswapRouter.WETH();
+        routeDetails[2] = stablecoin;
+        uint256[] memory amounts = uniswapRouter.getAmountsIn(fusionFee, routeDetails);
+        return 2 * amounts[0];
+    }
+
     function fusion(uint256 goddessID) public {
         uint256 nextLevelID = nextLevel[goddessID];
         uint256 fusionAmount = fusionRequire[goddessID];
@@ -102,30 +109,24 @@ contract GoddessFragments is Withdrawable {
             goddess.balanceOf(msg.sender, goddessID) > fusionAmount,
             "not enough goddess to fusion"
         );
-        require(goddessToken.balanceOf(msg.sender) > fusionFee, "not enough gds to fusion");
+        require(stablecoin != address(0), "stable coin not set");
 
-        goddessToken.safeTransferFrom(msg.sender, address(this), fusionFee);
-
-        ERC20Burnable burnableGoddessToken = ERC20Burnable(address(goddessToken));
-        // if stablecoin not set, burn all
-        if (stablecoin == address(0)) {
-            burnableGoddessToken.burn(fusionFee);
-            return;
-        }
-
-        // otherwise, burn 50%
-        uint256 burnAmount = fusionFee.div(2);
-        burnableGoddessToken.burn(burnAmount);
-        fusionFee = fusionFee.sub(burnAmount);
-
-        // swap to stablecoin, transferred to author
-        address author = authors[goddessID];
         address[] memory routeDetails = new address[](3);
         routeDetails[0] = address(goddessToken);
         routeDetails[1] = uniswapRouter.WETH();
         routeDetails[2] = stablecoin;
+        uint256[] memory amounts = uniswapRouter.getAmountsIn(fusionFee, routeDetails);
+
+        goddessToken.safeTransferFrom(msg.sender, address(this), 2 * amounts[0]);
+
+        ERC20Burnable burnableGoddessToken = ERC20Burnable(address(goddessToken));
+
+        burnableGoddessToken.burn(amounts[0]); // burn half
+
+        // swap to stablecoin, transferred to author
+        address author = authors[goddessID];
         uniswapRouter.swapExactTokensForTokens(
-            fusionFee,
+            amounts[0],
             0,
             routeDetails,
             author,
@@ -136,9 +137,8 @@ contract GoddessFragments is Withdrawable {
         goddess.mint(msg.sender, nextLevelID, 1, "");
     }
 
-    function setGovernance(address _governance) external onlyAdmin {
-        governance = _governance;
-        stablecoin = IGovernance(governance).getStableToken();
+    function setStableCoin(address _stableCoin) external onlyAdmin {
+        stablecoin = _stableCoin;
     }
 
     function setFusionFee(uint256 _fusionFee) external onlyAdmin {
