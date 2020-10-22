@@ -7,5 +7,5 @@ interface IGoddessFragments {
 
     function fusion(uint256 goddessID) external;
 
-    function collectedFragments(address user, uint256 amount) external;
+    function collectFragments(address user, uint256 amount) external;
 }

@@ -81,7 +81,7 @@ contract FragmentsPool is RewardsPool {
         super.getReward();
         uint256 reward = fragmentsEarned(msg.sender);
         if (reward > 0) {
-            goddessFragments.collectedFragments(msg.sender, reward);
+            goddessFragments.collectFragments(msg.sender, reward);
             fragments[msg.sender] = 0;
         }
     }

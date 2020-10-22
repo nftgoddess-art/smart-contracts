@@ -45,7 +45,7 @@ contract GoddessFragments is Withdrawable {
     event Staked(address indexed user, uint256 amount);
     event FusionFee(uint256 fee);
 
-    function collectedFragments(address user, uint256 amount) external onlyOperator {
+    function collectFragments(address user, uint256 amount) external onlyOperator {
         minted.add(amount);
         fragments[user] = fragments[user].add(amount);
     }
@@ -106,7 +106,7 @@ contract GoddessFragments is Withdrawable {
         uint256 fusionAmount = fusionRequire[goddessID];
         require(nextLevelID != 0, "there is no higher level of this goddess");
         require(
-            goddess.balanceOf(msg.sender, goddessID) > fusionAmount,
+            goddess.balanceOf(msg.sender, goddessID) >= fusionAmount,
             "not enough goddess to fusion"
         );
         require(stablecoin != address(0), "stable coin not set");
