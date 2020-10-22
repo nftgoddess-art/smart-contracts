@@ -88,15 +88,19 @@ async function main() {
     await goddess.transfer(pool.address, reward);
     console.log(`Transfered reward ${tokenData.rewardAmount} GDS`)
     await pool.setGovernance(info.treasuary);
+    console.log("________ setted Governance")
     await pool.setReferral(info.referral)
+    console.log("________ setted referral")
     await pool.setFragmentsPerWeek(
       new BN.from(tokenData.fragmentPerWeek).mul(
         new BN.from(10).pow(new BN.from(18))
       )
     )
+    console.log("________ setted FragmentsPerWeek")
     await pool.notifyRewardAmount(reward);
+    console.log("________ setted notifyRewardAmount")
     await fragments.addOperator(pool.address)
-
+    console.log("________ setted operator")
     pools[tokenData.token] = pool.address;
   }
   console.log(pools);
