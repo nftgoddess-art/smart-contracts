@@ -16,16 +16,16 @@ contract GoddessFragments is Withdrawable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    mapping(address => uint256) public fragments;
+    mapping(address => uint256) private fragments;
     mapping(uint256 => uint256) public summonRequire;
     mapping(uint256 => uint256) public fusionRequire;
     mapping(uint256 => uint256) public nextLevel;
     mapping(uint256 => address) public authors;
 
-    uint256 minted;
-    uint256 fusionFee;
-    IGoddess goddess;
-    IERC20 goddessToken;
+    uint256 public totalFragments;
+    uint256 public fusionFee;
+    IGoddess public goddess;
+    IERC20 public goddessToken;
 
     IUniswapRouter public uniswapRouter;
     address public stablecoin;
@@ -46,7 +46,7 @@ contract GoddessFragments is Withdrawable {
     event FusionFee(uint256 fee);
 
     function collectFragments(address user, uint256 amount) external onlyOperator {
-        minted.add(amount);
+        totalFragments.add(amount);
         fragments[user] = fragments[user].add(amount);
     }
 
@@ -89,6 +89,7 @@ contract GoddessFragments is Withdrawable {
             "Max goddess summon"
         );
         fragments[msg.sender] = fragments[msg.sender].sub(summonRequire[goddessID]);
+        totalFragments.sub(summonRequire[goddessID]);
         goddess.mint(msg.sender, goddessID, 1, "");
     }
 
