@@ -10,6 +10,7 @@ module.exports = {
     "GDS": "0xceB6F3fFE74B97E173AbA991831dd0B47a426D23",
     "treasuary": "0xcdfDF32013166D7B1B17d63403df6613163eDa31",
     "referral": "0x52dFd1c28f664569cce5c67cA25A7Ff4C6B0dF0a",
+    "fusionFee": 20,
     "pools": {
         "singleGDS": {
             "rewardAmount": "78000",

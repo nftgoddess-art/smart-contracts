@@ -16,11 +16,15 @@ async function main() {
   console.log("Goddess deployed to:", goddessNft.address);
 
   const GoddessFragments = await ethers.getContractFactory("GoddessFragments");
+  let fusionFee = new BN.from(info.fusionFee).mul(
+    new BN.from(10).pow(new BN.from(18))
+  );
   const fragments = await GoddessFragments.deploy(
     info.fragmentsAdmin,
     info.GDS,
     goddessNft.address,
-    info.uniswapRouter
+    info.uniswapRouter,
+    fusionFee
   );
   await fragments.deployed();
   console.log("Goddess Fragments deployed to:", fragments.address);
@@ -36,6 +40,7 @@ async function main() {
   // const uniswapFactory = await ethers.getContractAt('IUniswapV2Factory', info.uniswapFactory);
   const goddess = await ethers.getContractAt("GoddessToken", info.GDS);
   //====== deploy single GDS pool
+
   const singleGDSpool = await RewardPool.deploy(
     new BN.from(2).pow(256).sub(1), //max cap
     info.GDS,  // stake token address
