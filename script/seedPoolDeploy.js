@@ -4,6 +4,7 @@ const BN = ethers.BigNumber;
 const info = require("./config/seedPoolConfig")
 async function main() {
   const SeedPool = await ethers.getContractFactory("SeedPool");
+  const referral = await ethers.getContractAt('Referral', info.referral);
   // let info = JSON.parse(fs.readFileSync("script/config/seedPoolConfig.json", "utf8"));
   let gdsAddress = info.GDS;
   let goddess = await ethers.getContractAt("GoddessToken", gdsAddress);
@@ -27,6 +28,7 @@ async function main() {
     console.log(`Transfered reward ${tokenData.rewardAmount} GDS`)
     await pool.notifyRewardAmount(rewardAmount);
     await pool.setReferral(info.referral)
+    await referral.addOperator(pool.address)
     pools[tokenData.token] = pool.address;
   }
   console.log(pools);

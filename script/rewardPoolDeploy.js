@@ -29,6 +29,7 @@ async function main() {
   console.log("-- setted fragment as Goddess NFT operator")
 
   //************** Deploy reward pool ****************//
+  const referral = await ethers.getContractAt('Referral', info.referral);
 
   let pools = {};
   const RewardPool = await ethers.getContractFactory("FragmentsPool");
@@ -63,7 +64,9 @@ async function main() {
   await singleGDSpool.notifyRewardAmount(singleGDSpoolReward);
   console.log("________ setted notifyRewardAmount")
   await fragments.addOperator(singleGDSpool.address)
-  console.log("________ setted operator")
+  console.log("________ setted fragments operator")
+  await referral.addOperator(singleGDSpool.address)
+  console.log("________ setted referral operator")
   pools.GDS = singleGDSpool.address
 
   
@@ -100,7 +103,9 @@ async function main() {
     await pool.notifyRewardAmount(reward);
     console.log("________ setted notifyRewardAmount")
     await fragments.addOperator(pool.address)
-    console.log("________ setted operator")
+    console.log("________ setted fragments operator")
+    await referral.addOperator(pool.address)
+    console.log("________ setted referral operator")
     pools[tokenData.token] = pool.address;
   }
   console.log(pools);
