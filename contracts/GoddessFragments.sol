@@ -35,12 +35,14 @@ contract GoddessFragments is Withdrawable {
         IERC20 _goddessToken,
         address _goddess,
         IUniswapRouter _uniswapRouter,
-        uint256 _fusionFee
+        uint256 _fusionFee,
+        address _stableCoin
     ) public Withdrawable(_admin) {
         goddessToken = _goddessToken;
         goddess = IGoddess(_goddess);
         uniswapRouter = _uniswapRouter;
         fusionFee = _fusionFee;
+        stablecoin = _stableCoin;
     }
 
     event GoddessAdded(uint256 goddessID, uint256 fragments);
