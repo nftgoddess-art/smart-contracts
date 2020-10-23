@@ -46,7 +46,7 @@ contract GoddessFragments is Withdrawable {
     event FusionFee(uint256 fee);
 
     function collectFragments(address user, uint256 amount) external onlyOperator {
-        totalFragments.add(amount);
+        totalFragments = totalFragments.add(amount);
         fragments[user] = fragments[user].add(amount);
     }
 
