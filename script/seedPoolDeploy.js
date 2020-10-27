@@ -25,10 +25,13 @@ async function main() {
       new BN.from(10).pow(new BN.from(18))
     );
     await goddess.transfer(pool.address, rewardAmount);
-    console.log(`Transfered reward ${tokenData.rewardAmount} GDS`)
+    console.log(`___ Transfered reward ${tokenData.rewardAmount} GDS`)
     await pool.notifyRewardAmount(rewardAmount);
+    console.log("___ notifyRewardAmount ")
     await pool.setReferral(info.referral)
+    console.log("___ setReferral ")
     await referral.addOperator(pool.address)
+    console.log("___ addOperator ")
     pools[tokenData.token] = pool.address;
   }
   console.log(pools);

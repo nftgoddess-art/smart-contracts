@@ -1,9 +1,9 @@
 module.exports = {
-    "USDT": "0xF0597671c1baa8220Eb4b3344fBd6c3eC153e461",
-    "GDS": "0xceB6F3fFE74B97E173AbA991831dd0B47a426D23",
+    "USDT": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "GDS": "0xdB78f97B26757330bEDC2b4d9729c3E4C4560736",
     "totalHold": 200000,
     "totalLock": 133333,
-    "startTime": 1603407600,
+    "startTime": 1603803600,
     "monthLock": 6,
-    "admin": "0xD37483EBB7b2192e135686F06F10EdcEFac875CC"
+    "admin": "0x58Bc99C7875C62221299CF688745AE6892CC217E"
 }

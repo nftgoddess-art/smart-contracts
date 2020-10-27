@@ -1,64 +1,64 @@
 module.exports = {
-  "GDS": "0xceB6F3fFE74B97E173AbA991831dd0B47a426D23",
-  "startTime": 1603407600,
+  "GDS": "0xdB78f97B26757330bEDC2b4d9729c3E4C4560736",
+  "startTime": 1603803600,
   "duration": 604800,
-  "treasuary": "0xcdfDF32013166D7B1B17d63403df6613163eDa31",
-  "referral": "0x52dFd1c28f664569cce5c67cA25A7Ff4C6B0dF0a",
+  "treasuary": "0x484535c90774C2889Cbe92A0D91A3af4E7538b90",
+  "referral": "0x33b2027c2a31241A27aD687e93c465b7a1200428",
   "pool": [
     // {
     //   "token": "REN",
-    //   "address": "0x203056B273A60Ca45A5C5F4c63691EAD43A107EA",
+    //   "address": "0x408e41876cccdc0f92210600ef50372656052a38",
     //   "decimals": 18,
-    //   "maxCap": "33333",
+    //   "maxCap": "29500",
     //   "rewardAmount": "2500"
     // },
     // {
     //   "token": "WETH",
-    //   "address": "0x121E1b8E852D381180cEe921ae49C3958B85f0A8",
+    //   "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
     //   "decimals": 18,
-    //   "maxCap": "30",
-    //   "rewardAmount": "2500"
-    // },
-    // {
-    //   "token": "USDT",
-    //   "address": "0xF0597671c1baa8220Eb4b3344fBd6c3eC153e461",
-    //   "decimals": 6,
-    //   "maxCap": "10000",
-    //   "rewardAmount": "2500"
-    // },
-    // {
-    //   "token": "LINK",
-    //   "address": "0x497A3Dd7165869eFc68AE0394Ba19Bce6ad5aE1B",
-    //   "decimals": 18,
-    //   "maxCap": "1000",
-    //   "rewardAmount": "2500"
-    // },
-    // {
-    //   "token": "YFI",
-    //   "address": "0x7D10f0e1b5Ae7B37959242F792311f8873C16C6f",
-    //   "decimals": 18,
-    //   "maxCap": "1",
-    //   "rewardAmount": "2500"
-    // },
-    // {
-    //   "token": "UNI",
-    //   "address": "0xF145A5b73918FbC5f945Ee515949A5B4a73762e7",
-    //   "decimals": 18,
-    //   "maxCap": "3333",
+    //   "maxCap": "24",
     //   "rewardAmount": "2500"
     // },
     {
-      "token": "SNX",
-      "address": "0x0332fFF2A5906298482bf38A88103bAdd2Ba1824",
+      "token": "USDT",
+      "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+      "decimals": 6,
+      "maxCap": "10000",
+      "rewardAmount": "2500"
+    },
+    {
+      "token": "LINK",
+      "address": "0x514910771af9ca656af840dff83e8264ecf986ca",
       "decimals": 18,
-      "maxCap": "2500",
+      "maxCap": "825",
+      "rewardAmount": "2500"
+    },
+    {
+      "token": "YFI",
+      "address": "0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e",
+      "decimals": 18,
+      "maxCap": "1",
+      "rewardAmount": "2500"
+    },
+    {
+      "token": "UNI",
+      "address": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+      "decimals": 18,
+      "maxCap": "3250",
+      "rewardAmount": "2500"
+    },
+    {
+      "token": "SNX",
+      "address": "0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f",
+      "decimals": 18,
+      "maxCap": "2600",
       "rewardAmount": "2500"
     },
     {
       "token": "COMP",
-      "address": "0xA8CCE919EB6d0B1fcE5EB6175DAc9071Cd551831",
+      "address": "0xc00e94cb662c3520282e6f5717214004a7f26888",
       "decimals": 18,
-      "maxCap": "100",
+      "maxCap": "95",
       "rewardAmount": "2500"
     }
   ]
