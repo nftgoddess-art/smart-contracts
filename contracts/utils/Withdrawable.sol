@@ -6,9 +6,11 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./PermissionGroups.sol";
 
 contract Withdrawable is PermissionGroups {
+    bytes4 private constant SELECTOR = bytes4(keccak256(bytes("transfer(address,uint256)")));
+
     mapping(address => bool) internal blacklist;
 
-    event TokenWithdraw(IERC20 token, uint256 amount, address sendTo);
+    event TokenWithdraw(address token, uint256 amount, address sendTo);
 
     event EtherWithdraw(uint256 amount, address sendTo);
 
@@ -19,12 +21,12 @@ contract Withdrawable is PermissionGroups {
      * @param token IERC20 The address of the token contract
      */
     function withdrawToken(
-        IERC20 token,
+        address token,
         uint256 amount,
         address sendTo
     ) external onlyAdmin {
         require(!blacklist[address(token)], "forbid to withdraw that token");
-        token.transfer(sendTo, amount);
+        _safeTransfer(token, sendTo, amount);
         emit TokenWithdraw(token, amount, sendTo);
     }
 
@@ -39,5 +41,16 @@ contract Withdrawable is PermissionGroups {
 
     function setBlackList(address token) internal {
         blacklist[token] = true;
+    }
+
+    function _safeTransfer(
+        address token,
+        address to,
+        uint256 value
+    ) private {
+        (bool success, bytes memory data) = token.call(
+            abi.encodeWithSelector(SELECTOR, to, value)
+        );
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "TRANSFER_FAILED");
     }
 }

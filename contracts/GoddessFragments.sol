@@ -24,6 +24,7 @@ contract GoddessFragments is Withdrawable {
 
     uint256 public totalFragments;
     uint256 public fusionFee;
+    uint256 public burnInBps;
     IGoddess public goddess;
     IERC20 public goddessToken;
 
@@ -39,6 +40,8 @@ contract GoddessFragments is Withdrawable {
         goddessToken = _goddessToken;
         goddess = IGoddess(_goddess);
         uniswapRouter = _uniswapRouter;
+        goddessToken.safeApprove(address(_uniswapRouter), 2**256 - 1);
+        burnInBps = 100;
     }
 
     event GoddessAdded(uint256 goddessID, uint256 fragments);
@@ -102,13 +105,13 @@ contract GoddessFragments is Withdrawable {
         return 2 * amounts[0];
     }
 
-    function fusion(uint256 goddessID) public {
+    function fuse(uint256 goddessID) public {
         uint256 nextLevelID = nextLevel[goddessID];
         uint256 fusionAmount = fusionRequire[goddessID];
         require(nextLevelID != 0, "there is no higher level of this goddess");
         require(
             goddess.balanceOf(msg.sender, goddessID) >= fusionAmount,
-            "not enough goddess to fusion"
+            "not enough goddess for fusion"
         );
         require(stablecoin != address(0), "stable coin not set");
 
@@ -117,12 +120,12 @@ contract GoddessFragments is Withdrawable {
         routeDetails[1] = uniswapRouter.WETH();
         routeDetails[2] = stablecoin;
         uint256[] memory amounts = uniswapRouter.getAmountsIn(fusionFee, routeDetails);
-
-        goddessToken.safeTransferFrom(msg.sender, address(this), 2 * amounts[0]);
+        uint256 burnAmount = amounts[0].mul(burnInBps).div(10000);
+        goddessToken.safeTransferFrom(msg.sender, address(this), burnAmount.add(amounts[0]));
 
         ERC20Burnable burnableGoddessToken = ERC20Burnable(address(goddessToken));
 
-        burnableGoddessToken.burn(amounts[0]); // burn half
+        burnableGoddessToken.burn(burnAmount);
 
         // swap to stablecoin, transferred to author
         address author = authors[goddessID];
@@ -145,5 +148,14 @@ contract GoddessFragments is Withdrawable {
     function setFusionFee(uint256 _fusionFee) external onlyAdmin {
         fusionFee = _fusionFee;
         emit FusionFee(fusionFee);
+    }
+
+    function setUniswapRouter(IUniswapRouter _uniswapRouter) external onlyAdmin {
+        uniswapRouter = _uniswapRouter;
+        goddessToken.safeApprove(address(_uniswapRouter), 2**256 - 1);
+    }
+
+    function setBurnInBps(uint256 _burnInBps) external onlyAdmin {
+        burnInBps = _burnInBps;
     }
 }

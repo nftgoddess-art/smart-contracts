@@ -36,6 +36,7 @@ contract RewardsPool is SeedPool {
         uint256 _duration
     ) public SeedPool(_tokenCapAmount, _stakeToken, _goddessToken, _starttime, _duration) {
         uniswapRouter = _uniswapRouter;
+        goddessToken.safeApprove(address(_uniswapRouter), 2**256 - 1);
     }
 
     function setScaleFactorsAndThreshold(
@@ -203,5 +204,10 @@ contract RewardsPool is SeedPool {
 
         // update boostedSupply
         totalStakingBalance = totalStakingBalance.add(newBlessingBalance);
+    }
+
+    function setUniswapRouter(IUniswapRouter _uniswapRouter) external onlyAdmin {
+        uniswapRouter = _uniswapRouter;
+        goddessToken.safeApprove(address(_uniswapRouter), 2**256 - 1);
     }
 }
