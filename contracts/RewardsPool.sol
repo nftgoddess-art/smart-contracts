@@ -49,12 +49,13 @@ contract RewardsPool is SeedPool {
         scaleFactor = _scaleFactor;
     }
 
-    function bless() external updateReward(msg.sender) checkStart {
+    function bless(uint256 _maxGdsUse) external updateReward(msg.sender) checkStart {
         require(block.timestamp > nextBlessingTime[msg.sender], "early bless request");
         require(numBlessing[msg.sender] < blessThreshold, "bless reach limit");
         // save current blessing price, since transfer is done last
         // since getBlessingPrice() returns new bless balance, avoid re-calculation
         (uint256 blessPrice, uint256 newBlessingBalance) = getBlessingPrice(msg.sender);
+        require(_maxGdsUse > blessPrice, "price over maxGDS");
         // user's balance and blessingSupply will be changed in this function
         applyBlessing(msg.sender, newBlessingBalance);
 
