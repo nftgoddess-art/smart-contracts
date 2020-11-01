@@ -25,28 +25,36 @@ contract GoddessFragments is Withdrawable {
     uint256 public totalFragments;
     uint256 public fusionFee;
     uint256 public burnInBps;
+    uint256 public treasuryInBps;
     IGoddess public goddess;
     IERC20 public goddessToken;
 
     IUniswapRouter public uniswapRouter;
     address public stablecoin;
+    address public treasury;
 
     constructor(
         address _admin,
         IERC20 _goddessToken,
         address _goddess,
-        IUniswapRouter _uniswapRouter
+        IUniswapRouter _uniswapRouter,
+        address _treasury
     ) public Withdrawable(_admin) {
         goddessToken = _goddessToken;
         goddess = IGoddess(_goddess);
         uniswapRouter = _uniswapRouter;
         goddessToken.safeApprove(address(_uniswapRouter), 2**256 - 1);
-        burnInBps = 100;
+        treasury = _treasury;
     }
 
     event GoddessAdded(uint256 goddessID, uint256 fragments);
     event Staked(address indexed user, uint256 amount);
-    event FusionFee(uint256 fee);
+    event FusionFee(
+        address stablecoin,
+        uint256 fusionFee,
+        uint256 burnInBps,
+        uint256 treasuryInBps
+    );
 
     function collectFragments(address user, uint256 amount) external onlyOperator {
         totalFragments = totalFragments.add(amount);
@@ -102,7 +110,7 @@ contract GoddessFragments is Withdrawable {
         routeDetails[1] = uniswapRouter.WETH();
         routeDetails[2] = stablecoin;
         uint256[] memory amounts = uniswapRouter.getAmountsIn(fusionFee, routeDetails);
-        return 2 * amounts[0];
+        return amounts[0].mul(burnInBps.add(treasuryInBps).add(10000)).div(10000);
     }
 
     function fuse(uint256 goddessID) public {
@@ -121,11 +129,12 @@ contract GoddessFragments is Withdrawable {
         routeDetails[2] = stablecoin;
         uint256[] memory amounts = uniswapRouter.getAmountsIn(fusionFee, routeDetails);
         uint256 burnAmount = amounts[0].mul(burnInBps).div(10000);
-        goddessToken.safeTransferFrom(msg.sender, address(this), burnAmount.add(amounts[0]));
-
-        ERC20Burnable burnableGoddessToken = ERC20Burnable(address(goddessToken));
-
-        burnableGoddessToken.burn(burnAmount);
+        uint256 treasuryAmount = amounts[0].mul(treasuryInBps).div(10000);
+        goddessToken.safeTransferFrom(
+            msg.sender,
+            address(this),
+            burnAmount.add(treasuryAmount).add(amounts[0])
+        );
 
         // swap to stablecoin, transferred to author
         address author = authors[goddessID];
@@ -136,18 +145,23 @@ contract GoddessFragments is Withdrawable {
             author,
             block.timestamp + 100
         );
+        if (treasury != address(0)) {
+            uniswapRouter.swapExactTokensForTokens(
+                treasuryAmount,
+                0,
+                routeDetails,
+                treasury,
+                block.timestamp + 100
+            );
+        } else {
+            burnAmount = burnAmount.add(treasuryAmount);
+        }
+
+        ERC20Burnable burnableGoddessToken = ERC20Burnable(address(goddessToken));
+        burnableGoddessToken.burn(burnAmount);
 
         goddess.burn(msg.sender, goddessID, fusionAmount);
         goddess.mint(msg.sender, nextLevelID, 1, "");
-    }
-
-    function setStableCoin(address _stableCoin) external onlyAdmin {
-        stablecoin = _stableCoin;
-    }
-
-    function setFusionFee(uint256 _fusionFee) external onlyAdmin {
-        fusionFee = _fusionFee;
-        emit FusionFee(fusionFee);
     }
 
     function setUniswapRouter(IUniswapRouter _uniswapRouter) external onlyAdmin {
@@ -155,7 +169,20 @@ contract GoddessFragments is Withdrawable {
         goddessToken.safeApprove(address(_uniswapRouter), 2**256 - 1);
     }
 
-    function setBurnInBps(uint256 _burnInBps) external onlyAdmin {
+    function setFusionFee(
+        address _stablecoin,
+        uint256 _fusionFee,
+        uint256 _burnInBps,
+        uint256 _treasuryInBps
+    ) external onlyAdmin {
+        stablecoin = _stablecoin;
         burnInBps = _burnInBps;
+        fusionFee = _fusionFee;
+        treasuryInBps = _treasuryInBps;
+        emit FusionFee(stablecoin, fusionFee, burnInBps, treasuryInBps);
+    }
+
+    function setTreasury(address _treasury) external onlyAdmin {
+        treasury = _treasury;
     }
 }

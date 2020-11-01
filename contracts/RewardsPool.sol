@@ -86,6 +86,11 @@ contract RewardsPool is SeedPool {
         stablecoin = IGovernance(governance).getStableToken();
     }
 
+    function setUniswapRouter(IUniswapRouter _uniswapRouter) external onlyAdmin {
+        uniswapRouter = _uniswapRouter;
+        goddessToken.safeApprove(address(_uniswapRouter), 2**256 - 1);
+    }
+
     // stake visibility is public as overriding LPTokenWrapper's stake() function
     function stake(uint256 amount, address referrer) public updateReward(msg.sender) checkStart {
         _stake(amount, referrer);
@@ -171,10 +176,5 @@ contract RewardsPool is SeedPool {
         stakeBalance[user] = newBlessingBalance;
 
         totalStakingBalance = totalStakingBalance.add(newBlessingBalance);
-    }
-
-    function setUniswapRouter(IUniswapRouter _uniswapRouter) external onlyAdmin {
-        uniswapRouter = _uniswapRouter;
-        goddessToken.safeApprove(address(_uniswapRouter), 2**256 - 1);
     }
 }
