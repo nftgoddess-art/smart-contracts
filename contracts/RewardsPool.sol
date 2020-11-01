@@ -51,7 +51,7 @@ contract RewardsPool is SeedPool {
 
     function bless() external updateReward(msg.sender) checkStart {
         require(block.timestamp > nextBlessingTime[msg.sender], "early bless request");
-
+        require(numBlessing[msg.sender] < blessThreshold, "bless reach limit");
         // save current blessing price, since transfer is done last
         // since getBlessingPrice() returns new bless balance, avoid re-calculation
         (uint256 blessPrice, uint256 newBlessingBalance) = getBlessingPrice(msg.sender);
@@ -62,8 +62,8 @@ contract RewardsPool is SeedPool {
 
         ERC20Burnable burnableGoddessToken = ERC20Burnable(address(goddessToken));
 
-        // burn 25%
-        uint256 burnAmount = blessPrice.div(4);
+        // burn 50%
+        uint256 burnAmount = blessPrice.div(2);
         burnableGoddessToken.burn(burnAmount);
         blessPrice = blessPrice.sub(burnAmount);
 
@@ -124,9 +124,7 @@ contract RewardsPool is SeedPool {
 
         // if no. of blessings exceed threshold, increase blessing price by blessScaleFactor;
         if (blessedTime >= blessThreshold) {
-            blessingPrice = blessingPrice
-                .mul((blessedTime.sub(blessThreshold)).mul(blessScaleFactor).add(100))
-                .div(100);
+            return (0, balanceOf(user));
         }
 
         // adjust price based on expected increase in total stake supply
