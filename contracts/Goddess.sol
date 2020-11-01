@@ -55,6 +55,10 @@ contract Goddess is ERC1155, ERC1155MintBurn, ERC1155Metadata, Withdrawable {
         _setBaseMetadataURI(_newBaseMetadataURI);
     }
 
+    function setProxyRegistryAddress(address _proxyRegistryAddress) external onlyAdmin {
+        proxyRegistryAddress = _proxyRegistryAddress;
+    }
+
     function create(uint256 _maxSupply) external onlyOperator returns (uint256) {
         uint256 _id = _getNextTokenID();
         _incrementTokenTypeId();
