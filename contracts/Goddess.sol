@@ -19,8 +19,8 @@ contract Goddess is ERC1155, ERC1155MintBurn, ERC1155Metadata, Withdrawable {
 
     address proxyRegistryAddress;
     uint256 private _currentTokenID = 0;
-    mapping(uint256 => uint256) public tokenSupply;
-    mapping(uint256 => uint256) public tokenMaxSupply;
+    mapping(uint256 => uint256) private tokenSupply;
+    mapping(uint256 => uint256) private tokenMaxSupply;
     mapping(uint256 => uint256) public nextLevel;
     // Contract name
     string public name;
@@ -97,6 +97,7 @@ contract Goddess is ERC1155, ERC1155MintBurn, ERC1155Metadata, Withdrawable {
         uint256 _amount
     ) public onlyOperator {
         _burn(_from, _id, _amount);
+        tokenMaxSupply[_id] = tokenMaxSupply[_id].sub(_amount);
         tokenSupply[_id] = tokenSupply[_id].sub(_amount);
     }
 
