@@ -30,7 +30,7 @@ contract GoddessFragments is Withdrawable {
     IERC20 public goddessToken;
 
     IUniswapRouter public uniswapRouter;
-    address public stablecoin;
+    IERC20 public stablecoin;
     address public treasury;
 
     constructor(
@@ -50,7 +50,7 @@ contract GoddessFragments is Withdrawable {
     event GoddessAdded(uint256 goddessID, uint256 fragments);
     event Staked(address indexed user, uint256 amount);
     event FusionFee(
-        address stablecoin,
+        IERC20 stablecoin,
         uint256 fusionFee,
         uint256 burnInBps,
         uint256 treasuryInBps
@@ -108,9 +108,9 @@ contract GoddessFragments is Withdrawable {
         address[] memory routeDetails = new address[](3);
         routeDetails[0] = address(goddessToken);
         routeDetails[1] = uniswapRouter.WETH();
-        routeDetails[2] = stablecoin;
+        routeDetails[2] = address(stablecoin);
         uint256[] memory amounts = uniswapRouter.getAmountsIn(fusionFee, routeDetails);
-        return amounts[0].mul(burnInBps.add(treasuryInBps).add(10000)).div(10000);
+        return amounts[0].mul(burnInBps.add(10000)).div(10000);
     }
 
     function fuse(uint256 goddessID) public {
@@ -121,40 +121,31 @@ contract GoddessFragments is Withdrawable {
             goddess.balanceOf(msg.sender, goddessID) >= fusionAmount,
             "not enough goddess for fusion"
         );
-        require(stablecoin != address(0), "stable coin not set");
+        require(address(stablecoin) != address(0), "stable coin not set");
 
         address[] memory routeDetails = new address[](3);
         routeDetails[0] = address(goddessToken);
         routeDetails[1] = uniswapRouter.WETH();
-        routeDetails[2] = stablecoin;
+        routeDetails[2] = address(stablecoin);
         uint256[] memory amounts = uniswapRouter.getAmountsIn(fusionFee, routeDetails);
         uint256 burnAmount = amounts[0].mul(burnInBps).div(10000);
-        uint256 treasuryAmount = amounts[0].mul(treasuryInBps).div(10000);
-        goddessToken.safeTransferFrom(
-            msg.sender,
-            address(this),
-            burnAmount.add(treasuryAmount).add(amounts[0])
-        );
+        goddessToken.safeTransferFrom(msg.sender, address(this), burnAmount.add(amounts[0]));
 
         // swap to stablecoin, transferred to author
         address author = authors[goddessID];
-        uniswapRouter.swapExactTokensForTokens(
+        uniswapRouter.swapTokensForExactTokens(
+            fusionFee,
             amounts[0],
-            0,
             routeDetails,
-            author,
+            address(this),
             block.timestamp + 100
         );
         if (treasury != address(0)) {
-            uniswapRouter.swapExactTokensForTokens(
-                treasuryAmount,
-                0,
-                routeDetails,
-                treasury,
-                block.timestamp + 100
-            );
+            uint256 treasuryAmount = fusionFee.mul(treasuryInBps).div(10000);
+            stablecoin.safeTransfer(treasury, treasuryAmount);
+            stablecoin.safeTransfer(author, fusionFee.sub(treasuryAmount));
         } else {
-            burnAmount = burnAmount.add(treasuryAmount);
+            stablecoin.safeTransfer(author, fusionFee);
         }
 
         ERC20Burnable burnableGoddessToken = ERC20Burnable(address(goddessToken));
@@ -170,7 +161,7 @@ contract GoddessFragments is Withdrawable {
     }
 
     function setFusionFee(
-        address _stablecoin,
+        IERC20 _stablecoin,
         uint256 _fusionFee,
         uint256 _burnInBps,
         uint256 _treasuryInBps
