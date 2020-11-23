@@ -53,7 +53,7 @@ contract FragmentsPool is RewardsPool {
             fragmentsPerTokenStored.add(
                 block
                     .timestamp
-                    .sub(lastUpdateTime)
+                    .sub(fragmentsLastUpdateTime)
                     .mul(fragmentsPerWeek)
                     .mul(1e18)
                     .div(604800)
