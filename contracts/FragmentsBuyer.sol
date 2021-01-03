@@ -56,7 +56,7 @@ contract FragmentsBuyer is Withdrawable {
             return tokenAmount;
         }
         address[] memory routeDetails;
-        if (token == weth) {
+        if (token == weth || pricingToken == weth) {
             routeDetails = new address[](2);
             routeDetails[0] = address(token);
             routeDetails[1] = address(pricingToken);
@@ -81,11 +81,12 @@ contract FragmentsBuyer is Withdrawable {
             token.safeTransferFrom(msg.sender, treasury, tokenAmount);
         } else {
             address[] memory routeDetails;
-            if (token == weth) {
+            if (token == weth || pricingToken == weth)  {
                 routeDetails = new address[](2);
                 routeDetails[0] = address(token);
                 routeDetails[1] = address(pricingToken);
-            } else {
+            } else
+            {
                 routeDetails = new address[](3);
                 routeDetails[0] = address(token);
                 routeDetails[1] = address(weth);
